@@ -33,15 +33,24 @@ $("#submitPostButton").click(() => {
 $(document).on("click", ".likeButton", () => {
     var button = $(event.target);
     var postId = getPostIdFromElement(button);
-    console.log(postId);
+
+    if (postId === undefined) return;
+
+    $.ajax({
+        url: "/api/posts",
+        type: "PUT",
+        success: (postData) => {
+            console.log(postData);
+        },
+    });
 });
 
-function getPostIdFromElement (element) {
+function getPostIdFromElement(element) {
     var isRoot = element.hasClass("post");
     var rootElement = isRoot ? element : element.closest(".post");
     var postId = rootElement.data().id;
 
-    if(postId === undefined) return alert("Post id undefined");
+    if (postId === undefined) return alert("Post id undefined");
 
     return postId;
 }
@@ -49,7 +58,7 @@ function getPostIdFromElement (element) {
 function createPostHtml(postData) {
     var postedBy = postData.postedBy;
 
-    if(postedBy._id === undefined) {
+    if (postedBy._id === undefined) {
         return console.log("User object not populated");
     }
 
@@ -92,9 +101,7 @@ function createPostHtml(postData) {
             </div>`;
 }
 
-
 function timeDifference(current, previous) {
-
     var msPerMinute = 60 * 1000;
     var msPerHour = msPerMinute * 60;
     var msPerDay = msPerHour * 24;
@@ -104,27 +111,17 @@ function timeDifference(current, previous) {
     var elapsed = current - previous;
 
     if (elapsed < msPerMinute) {
-        if(elapsed/1000 < 30) return "Just now";
-         return Math.round(elapsed/1000) + ' seconds ago';   
-    }
-
-    else if (elapsed < msPerHour) {
-         return Math.round(elapsed/msPerMinute) + ' minutes ago';   
-    }
-
-    else if (elapsed < msPerDay ) {
-         return Math.round(elapsed/msPerHour ) + ' hours ago';   
-    }
-
-    else if (elapsed < msPerMonth) {
-        return Math.round(elapsed/msPerDay) + ' days ago';   
-    }
-
-    else if (elapsed < msPerYear) {
-        return Math.round(elapsed/msPerMonth) + ' months ago';   
-    }
-
-    else {
-        return Math.round(elapsed/msPerYear ) + ' years ago';   
+        if (elapsed / 1000 < 30) return "Just now";
+        return Math.round(elapsed / 1000) + " seconds ago";
+    } else if (elapsed < msPerHour) {
+        return Math.round(elapsed / msPerMinute) + " minutes ago";
+    } else if (elapsed < msPerDay) {
+        return Math.round(elapsed / msPerHour) + " hours ago";
+    } else if (elapsed < msPerMonth) {
+        return Math.round(elapsed / msPerDay) + " days ago";
+    } else if (elapsed < msPerYear) {
+        return Math.round(elapsed / msPerMonth) + " months ago";
+    } else {
+        return Math.round(elapsed / msPerYear) + " years ago";
     }
 }
