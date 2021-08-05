@@ -82,6 +82,12 @@ function getPostIdFromElement(element) {
 }
 
 function createPostHtml(postData) {
+    if (postData == null) return alert("Post object is null");
+
+    var isRetweet = postData.retweetData !== undefined;
+    var retweetedBy = isRetweet ? postData.postedBy.username : null;
+    postData = isRetweet ? postData.retweetData : postData;
+
     var postedBy = postData.postedBy;
 
     if (postedBy._id === undefined) {
@@ -94,7 +100,9 @@ function createPostHtml(postData) {
     var likeButtonActiveClass = postData.likes.includes(userLoggedIn._id)
         ? "active"
         : "";
-    var retweetButtonActiveClass = postData.retweetUsers.includes(userLoggedIn._id)
+    var retweetButtonActiveClass = postData.retweetUsers.includes(
+        userLoggedIn._id
+    )
         ? "active"
         : "";
 
