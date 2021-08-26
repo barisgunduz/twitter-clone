@@ -35,10 +35,14 @@ $("#submitPostButton, #submitReplyButton").click(() => {
     }
 
     $.post("/api/posts", data, (postData, status, xhr) => {
-        var html = createPostHtml(postData);
-        $(".postsContainer").prepend(html);
-        textbox.val("");
-        button.prop("disabled", true);
+        if (postData.replyTo) {
+            location.reload();
+        } else {
+            var html = createPostHtml(postData);
+            $(".postsContainer").prepend(html);
+            textbox.val("");
+            button.prop("disabled", true);
+        }
     });
 });
 
