@@ -34,7 +34,7 @@ $("#submitPostButton, #submitReplyButton").click(() => {
         data.replyTo = id;
     }
 
-    $.post("/api/posts", data, (postData, status, xhr) => {
+    $.post("/api/posts", data, (postData) => {
         if (postData.replyTo) {
             location.reload();
         } else {
@@ -56,8 +56,26 @@ $("#replyModal").on("show.bs.modal", (event) => {
     });
 });
 
-$("#replyModal").on("hidden.bs.modal", () => {
-    $("#originalPostContainer").html("");
+$("#replyModal").on("hidden.bs.modal", () =>
+    $("#originalPostContainer").html("")
+);
+
+$("#deletePostModal").on("show.bs.modal", (event) => {
+    var button = $(event.relatedTarget);
+    var postId = getPostIdFromElement(button);
+    $("#deletePostButton").data("id", postId);
+});
+
+$("#deletePostButton").click((event) => {
+    var postId = $(event.target).data("id");
+
+    $.ajax({
+        url: `/api/posts/${postId}`,
+        type: "DELETE",
+        success: () => {
+            location.reload();
+        },
+    });
 });
 
 $(document).on("click", ".likeButton", (event) => {
@@ -71,6 +89,7 @@ $(document).on("click", ".likeButton", (event) => {
         type: "PUT",
         success: (postData) => {
             button.find("span").text(postData.likes.length || "");
+
             if (postData.likes.includes(userLoggedIn._id)) {
                 button.addClass("active");
             } else {
@@ -80,7 +99,7 @@ $(document).on("click", ".likeButton", (event) => {
     });
 });
 
-$(document).on("click", ".retweetButton", () => {
+$(document).on("click", ".retweetButton", (event) => {
     var button = $(event.target);
     var postId = getPostIdFromElement(button);
 
@@ -101,7 +120,7 @@ $(document).on("click", ".retweetButton", () => {
     });
 });
 
-$(document).on("click", ".post", () => {
+$(document).on("click", ".post", (event) => {
     var element = $(event.target);
     var postId = getPostIdFromElement(element);
 
@@ -112,7 +131,7 @@ $(document).on("click", ".post", () => {
 
 function getPostIdFromElement(element) {
     var isRoot = element.hasClass("post");
-    var rootElement = isRoot ? element : element.closest(".post");
+    var rootElement = isRoot == true ? element : element.closest(".post");
     var postId = rootElement.data().id;
 
     if (postId === undefined) return alert("Post id undefined");
@@ -121,7 +140,7 @@ function getPostIdFromElement(element) {
 }
 
 function createPostHtml(postData, largeFont = false) {
-    if (postData == null) return alert("Post object is null");
+    if (postData == null) return alert("post object is null");
 
     var isRetweet = postData.retweetData !== undefined;
     var retweetedBy = isRetweet ? postData.postedBy.username : null;
@@ -149,9 +168,9 @@ function createPostHtml(postData, largeFont = false) {
     var retweetText = "";
     if (isRetweet) {
         retweetText = `<span>
-                <i class='fas fa-retweet'></i>
-                Retweeted by <a href='/profile/${retweetedBy}'>@${retweetedBy}</a>
-            </span>`;
+                        <i class='fas fa-retweet'></i>
+                        Retweeted by <a href='/profile/${retweetedBy}'>@${retweetedBy}</a>    
+                    </span>`;
     }
 
     var replyFlag = "";
@@ -163,7 +182,14 @@ function createPostHtml(postData, largeFont = false) {
         }
 
         var replyToUsername = postData.replyTo.postedBy.username;
-        replyFlag = `<div class='replyFlag'>Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}</a></div>`;
+        replyFlag = `<div class='replyFlag'>
+                        Replying to <a href='/profile/${replyToUsername}'>@${replyToUsername}<a>
+                    </div>`;
+    }
+
+    var buttons = "";
+    if (postData.postedBy._id == userLoggedIn._id) {
+        buttons = `<button data-id="${postData._id}" data-toggle="modal" data-target="#deletePostModal"><i class='fas fa-times'></i></button>`;
     }
 
     return `<div class='post ${largeFontClass}' data-id='${postData._id}'>
@@ -181,11 +207,12 @@ function createPostHtml(postData, largeFont = false) {
                             }' class='displayName'>${displayName}</a>
                             <span class='username'>@${postedBy.username}</span>
                             <span class='date'>${timestamp}</span>
-                        <div>
+                            ${buttons}
+                        </div>
                         ${replyFlag}
                         <div class='postBody'>
                             <span>${postData.content}</span>
-                        <div>
+                        </div>
                         <div class='postFooter'>
                             <div class='postButtonContainer'>
                                 <button data-toggle='modal' data-target='#replyModal'>
@@ -206,7 +233,7 @@ function createPostHtml(postData, largeFont = false) {
                                     <span>${postData.likes.length || ""}</span>
                                 </button>
                             </div>
-                        <div>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -223,6 +250,7 @@ function timeDifference(current, previous) {
 
     if (elapsed < msPerMinute) {
         if (elapsed / 1000 < 30) return "Just now";
+
         return Math.round(elapsed / 1000) + " seconds ago";
     } else if (elapsed < msPerHour) {
         return Math.round(elapsed / msPerMinute) + " minutes ago";
@@ -250,7 +278,7 @@ function outputPosts(results, container) {
     });
 
     if (results.length == 0) {
-        container.append("<span class='noResults'>Nothing to show</span>");
+        container.append("<span class='noResults'>Nothing to show.</span>");
     }
 }
 

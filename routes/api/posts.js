@@ -67,7 +67,7 @@ router.put("/:id/like", async (req, res, next) => {
 
     var option = isLiked ? "$pull" : "$addToSet";
 
-    // INsert user like
+    // Insert user like
     req.session.user = await User.findByIdAndUpdate(
         userId,
         { [option]: { likes: postId } },
@@ -94,7 +94,7 @@ router.post("/:id/retweet", async (req, res, next) => {
     var postId = req.params.id;
     var userId = req.session.user._id;
 
-    // try and delete retweet
+    // Try and delete retweet
     var deletedPost = await Post.findOneAndDelete({
         postedBy: userId,
         retweetData: postId,
@@ -117,7 +117,7 @@ router.post("/:id/retweet", async (req, res, next) => {
         });
     }
 
-    // INsert user like
+    // Insert user like
     req.session.user = await User.findByIdAndUpdate(
         userId,
         { [option]: { retweets: repost._id } },
@@ -140,23 +140,25 @@ router.post("/:id/retweet", async (req, res, next) => {
     res.status(200).send(post);
 });
 
+router.delete("/:id", (req, res, next) => {
+    Post.findByIdAndDelete(req.params.id)
+        .then(() => res.sendStatus(202))
+        .catch((error) => {
+            console.log(error);
+            res.sendStatus(400);
+        });
+});
+
 async function getPosts(filter) {
     var results = await Post.find(filter)
         .populate("postedBy")
         .populate("retweetData")
         .populate("replyTo")
         .sort({ createdAt: -1 })
-        .catch((error) => {
-            console.log(error);
-        });
+        .catch((error) => console.log(error));
 
-    results = await User.populate(results, {
-        path: "replyTo.postedBy",
-    });
-
-    return await User.populate(results, {
-        path: "retweetData.postedBy",
-    });
+    results = await User.populate(results, { path: "replyTo.postedBy" });
+    return await User.populate(results, { path: "retweetData.postedBy" });
 }
 
 module.exports = router;
