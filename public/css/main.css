@@ -1,7 +1,7 @@
 :root {
     --blue: #1fa2f1;
     --blueLight: #9bd1f9;
-    --blueBackground: rgba(212, 237, 255, 0.8);
+    --blueBackground: rgba(212, 237, 255, 0.6);
     --buttonHoverBg: #d4edff;
     --lightGrey: rgb(230, 236, 240);
     --spacing: 15px;
@@ -264,8 +264,8 @@ button span {
 }
 
 .profileHeaderContainer .userImageContainer {
-    height: 132px;
     width: 132px;
+    height: 132px;
     margin-left: var(--spacing);
     position: absolute;
     bottom: -66px;
@@ -309,7 +309,7 @@ button span {
 .profileHeaderContainer .userDetailsContainer {
     display: flex;
     flex-direction: column;
-    padding-top: 0 var(--spacing);
+    padding: 0 var(--spacing);
 }
 
 .followersContainer .value {
@@ -361,7 +361,7 @@ button span {
 
 .resultsContainer {
     display: flex;
-    flex-direction: column;   
+    flex-direction: column;
 }
 
 .resultsContainer .user {
@@ -375,11 +375,11 @@ button span {
     padding: 0 var(--spacing);
 }
 
-.profilePictureButton ,
-.coverPhotoButton{
+.profilePictureButton,
+.coverPhotoButton {
     position: absolute;
     font-size: 50px;
-    color: rgba(0,0,0,0.8);
+    color: rgba(0, 0, 0, 0.6);
     display: none;
 }
 
@@ -405,5 +405,20 @@ button span {
 #coverPreview {
     width: 100%;
     display: block;
+
+    /* This rule is very important, please don't ignore this */
     max-width: 100%;
+}
+
+.pinButton.active {
+    color: var(--blue);
+}
+
+.pinnedPostText {
+    font-size: 12px;
+    color: var(--greyText);
+}
+
+.pinnedPostContainer {
+    border-bottom: 10px solid rgb(230, 236, 240);
 }

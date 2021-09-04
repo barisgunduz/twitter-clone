@@ -1,21 +1,23 @@
 $(document).ready(() => {
-    if (selectedTab === "followers") {
+
+    if(selectedTab === "followers") {
         loadFollowers();
-    } else {
+    }
+    else {
         loadFollowing();
     }
 });
 
 function loadFollowers() {
-    $.get(`/api/users/${profileUserId}/followers`, (results) => {
+    $.get(`/api/users/${profileUserId}/followers`, results => {
         outputUsers(results.followers, $(".resultsContainer"));
-    });
+    })
 }
 
 function loadFollowing() {
-    $.get(`/api/users/${profileUserId}/following`, (results) => {
+    $.get(`/api/users/${profileUserId}/following`, results => {
         outputUsers(results.following, $(".resultsContainer"));
-    });
+    })
 }
 
 function outputUsers(results, container) {
@@ -24,7 +26,7 @@ function outputUsers(results, container) {
     results.forEach(result => {
         var html = createUserHtml(result, true);
         container.append(html);
-    })
+    });
 
     if(results.length == 0) {
         container.append("<span class='noResults'>No results found</span>")
@@ -39,10 +41,10 @@ function createUserHtml(userData, showFollowButton) {
     var buttonClass = isFollowing ? "followButton following" : "followButton"
 
     var followButton = "";
-    if(showFollowButton && userLoggedIn._id != userData._id) {
+    if (showFollowButton && userLoggedIn._id != userData._id) {
         followButton = `<div class='followButtonContainer'>
                             <button class='${buttonClass}' data-user='${userData._id}'>${text}</button>
-                        </div>`
+                        </div>`;
     }
 
     return `<div class='user'>
@@ -56,5 +58,5 @@ function createUserHtml(userData, showFollowButton) {
                     </div>
                 </div>
                 ${followButton}
-            </div>`
+            </div>`;
 }

@@ -1,9 +1,9 @@
 extends layouts/main-layout.pug
 
-block content   
+block content
     if !profileUser
         span.errorMessage Check the url you are trying to access
-    else
+    else  
         script.
             var profileUserId = '!{profileUser._id}';
             var selectedTab = '!{selectedTab}';
@@ -12,7 +12,7 @@ block content
             +createTab("Following", `/profile/${profileUser.username}/following`, selectedTab != "followers")
             +createTab("Followers", `/profile/${profileUser.username}/followers`, selectedTab == "followers")
 
-        .resultsContainer 
+        .resultsContainer
 
 block scripts
     script(src="/js/followersAndFollowing.js")
