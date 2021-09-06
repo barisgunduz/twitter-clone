@@ -1,5 +1,7 @@
 // Globals
 var cropper;
+var timer;
+var selectedUsers = [];
 
 $("#postTextarea, #replyTextarea").keyup((event) => {
     var textbox = $(event.target);
@@ -221,6 +223,26 @@ $("#coverPhotoButton").click(() => {
         });
     });
 });
+
+$("#userSearchTextbox").keydown((event) => {
+    clearTimeout(timer);
+    var textbox = $(event.target);
+    var value = textbox.val();
+
+    if(value == "" && event.keycode == 8) {
+        //Remove user from selection
+        return;
+    } 
+
+    timer = setTimeout(() =>{
+        value = textbox.val().trim();
+        if(value == "") {
+            $(".resultsContainer").html("");
+        } else {
+            searchUsers(value);
+        }
+    },1000)
+})
 
 $(document).on("click", ".likeButton", (event) => {
     var button = $(event.target);
@@ -527,4 +549,50 @@ function createUserHtml(userData, showFollowButton) {
                 </div>
                 ${followButton}
             </div>`;
+}
+
+function searchUsers(searchTerm) {
+    $.get("/api/users", { search: searchTerm }, results => {
+        outputSelectableUsers(results, $(".resultsContainer"))
+    })
+}
+
+function outputSelectableUsers(results, container) {
+    container.html("");
+
+    results.forEach(result => {
+        if(result._id == userLoggedIn._id || selectedUsers.some(u => u._id == result._id)) {
+            return;
+        }
+        var html = createUserHtml(result, false);
+        var element = $(html);
+        element.click(() => userSelected(result));
+
+        container.append(element);
+    });
+
+    if(results.length == 0) {
+        container.append("<span class='noResults'>No results found</span>")
+    }
+}
+
+function userSelected(user) {
+    selectedUsers.push(user);
+    updateSelectedUsersHtml();
+    $("#userSearchTextbox").val("").focus();
+    $(".resultsContainer").html("");
+    $("#createChatButton").prop("disabled", false);
+}
+
+function updateSelectedUsersHtml() {
+    var elements = [];
+
+    selectedUsers.forEach(user => {
+        var name = user.firstName + " " + user.lastName;
+        var userElement = $(`<span class='selectedUser'>${name}</span>`);
+        elements.push(userElement);
+    })
+
+    $(".selectedUser").remove();
+    $("#selectedUsers").prepend(elements);
 }
