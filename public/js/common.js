@@ -229,8 +229,16 @@ $("#userSearchTextbox").keydown((event) => {
     var textbox = $(event.target);
     var value = textbox.val();
 
-    if(value == "" && event.keycode == 8) {
+    if(value == "" && (event.which == 8 || event.keyCode == 8)) {
         //Remove user from selection
+        selectedUsers.pop();
+        updateSelectedUsersHtml();
+        $(".resultsContainer").html("");
+
+        if(selectedUsers.length == 0) {
+            $("#createChatButton").prop("disabled", true);
+        }
+
         return;
     } 
 
@@ -243,6 +251,16 @@ $("#userSearchTextbox").keydown((event) => {
         }
     },1000)
 })
+
+$("#createChatButton").click(() => {
+    var data = JSON.stringify(selectedUsers);
+
+    $.post("/api/chats", { users: data}, chat => {
+
+        if(!chat || !chat._id) return alert("Invalid response from server.")
+        window.location.href = `/messages/${chat._id}`;
+    })
+});
 
 $(document).on("click", ".likeButton", (event) => {
     var button = $(event.target);
