@@ -229,37 +229,36 @@ $("#userSearchTextbox").keydown((event) => {
     var textbox = $(event.target);
     var value = textbox.val();
 
-    if(value == "" && (event.which == 8 || event.keyCode == 8)) {
+    if (value == "" && (event.which == 8 || event.keyCode == 8)) {
         //Remove user from selection
         selectedUsers.pop();
         updateSelectedUsersHtml();
         $(".resultsContainer").html("");
 
-        if(selectedUsers.length == 0) {
+        if (selectedUsers.length == 0) {
             $("#createChatButton").prop("disabled", true);
         }
 
         return;
-    } 
+    }
 
-    timer = setTimeout(() =>{
+    timer = setTimeout(() => {
         value = textbox.val().trim();
-        if(value == "") {
+        if (value == "") {
             $(".resultsContainer").html("");
         } else {
             searchUsers(value);
         }
-    },1000)
-})
+    }, 1000);
+});
 
 $("#createChatButton").click(() => {
     var data = JSON.stringify(selectedUsers);
 
-    $.post("/api/chats", { users: data}, chat => {
-
-        if(!chat || !chat._id) return alert("Invalid response from server.")
+    $.post("/api/chats", { users: data }, (chat) => {
+        if (!chat || !chat._id) return alert("Invalid response from server.");
         window.location.href = `/messages/${chat._id}`;
-    })
+    });
 });
 
 $(document).on("click", ".likeButton", (event) => {
@@ -531,22 +530,22 @@ function outputPostsWithReplies(results, container) {
 function outputUsers(results, container) {
     container.html("");
 
-    results.forEach(result => {
+    results.forEach((result) => {
         var html = createUserHtml(result, true);
         container.append(html);
     });
 
-    if(results.length == 0) {
-        container.append("<span class='noResults'>No results found</span>")
+    if (results.length == 0) {
+        container.append("<span class='noResults'>No results found</span>");
     }
 }
 
 function createUserHtml(userData, showFollowButton) {
-
     var name = userData.firstName + " " + userData.lastName;
-    var isFollowing = userLoggedIn.following && userLoggedIn.following.includes(userData._id);
-    var text = isFollowing ? "Following" : "Follow"
-    var buttonClass = isFollowing ? "followButton following" : "followButton"
+    var isFollowing =
+        userLoggedIn.following && userLoggedIn.following.includes(userData._id);
+    var text = isFollowing ? "Following" : "Follow";
+    var buttonClass = isFollowing ? "followButton following" : "followButton";
 
     var followButton = "";
     if (showFollowButton && userLoggedIn._id != userData._id) {
@@ -570,16 +569,19 @@ function createUserHtml(userData, showFollowButton) {
 }
 
 function searchUsers(searchTerm) {
-    $.get("/api/users", { search: searchTerm }, results => {
-        outputSelectableUsers(results, $(".resultsContainer"))
-    })
+    $.get("/api/users", { search: searchTerm }, (results) => {
+        outputSelectableUsers(results, $(".resultsContainer"));
+    });
 }
 
 function outputSelectableUsers(results, container) {
     container.html("");
 
-    results.forEach(result => {
-        if(result._id == userLoggedIn._id || selectedUsers.some(u => u._id == result._id)) {
+    results.forEach((result) => {
+        if (
+            result._id == userLoggedIn._id ||
+            selectedUsers.some((u) => u._id == result._id)
+        ) {
             return;
         }
         var html = createUserHtml(result, false);
@@ -589,8 +591,8 @@ function outputSelectableUsers(results, container) {
         container.append(element);
     });
 
-    if(results.length == 0) {
-        container.append("<span class='noResults'>No results found</span>")
+    if (results.length == 0) {
+        container.append("<span class='noResults'>No results found</span>");
     }
 }
 
@@ -605,12 +607,34 @@ function userSelected(user) {
 function updateSelectedUsersHtml() {
     var elements = [];
 
-    selectedUsers.forEach(user => {
+    selectedUsers.forEach((user) => {
         var name = user.firstName + " " + user.lastName;
         var userElement = $(`<span class='selectedUser'>${name}</span>`);
         elements.push(userElement);
-    })
+    });
 
     $(".selectedUser").remove();
     $("#selectedUsers").prepend(elements);
+}
+
+function getChatName(chatData) {
+    var chatName = chatData.chatName;
+
+    if (!chatName) {
+        var otherChatUsers = getOtherChatUsers(chatData.users);
+        var namesArray = otherChatUsers.map(
+            (user) => user.firstName + " " + user.lastName
+        );
+        chatName = namesArray.join(", ");
+    }
+
+    return chatName;
+}
+
+function getOtherChatUsers(users) {
+    if (users.length == 1) return users;
+
+    return users.filter((user) => {
+        return user._id != userLoggedIn._id;
+    });
 }
