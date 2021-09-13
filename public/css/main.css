@@ -1,16 +1,16 @@
 :root {
-    --blue: #1fa2f1;
-    --blueLight: #9bd1f9;
+    --blue: #1FA2F1;
+    --blueLight: #9BD1F9;
     --blueBackground: rgba(212, 237, 255, 0.6);
     --buttonHoverBg: #d4edff;
     --lightGrey: rgb(230, 236, 240);
     --spacing: 15px;
     --greyText: rgb(101, 119, 134);
-    --greyButtonText: rgba(0, 0, 0, 0.34);
-    --red: rgb(226, 34, 94);
-    --redBackground: rgba(226, 34, 94, 0.1);
-    --green: rgb(23, 191, 99);
-    --greenBackground: rgba(23, 191, 99, 0.1);
+    --greyButtonText: rgba(0,0,0,0.34);
+    --red: rgb(226,34,94);
+    --redBackground: rgba(226,34,94,0.1);
+    --green: rgb(23,191,99);
+    --greenBackground: rgba(23,191,99,0.1);
 }
 
 html, body {
@@ -95,7 +95,7 @@ button span {
 }
 
 .mainSectionContainer {
-    padding: 0;
+    padding:  0;
     border-left: 1px solid var(--lightGrey);
     border-right: 1px solid var(--lightGrey);
     display: flex;
@@ -191,7 +191,7 @@ button span {
 
 .username,
 .date {
-    color: var(--greyText);
+    color: var(--greyText)
 }
 
 .displayName {
@@ -233,7 +233,7 @@ button span {
 
 .postButtonContainer.red button:hover {
     color: var(--red);
-    background-color: var(--redBackground);
+    background-color: var(--redBackground)
 }
 
 .postButtonContainer.green button.active {
@@ -242,7 +242,7 @@ button span {
 
 .postButtonContainer.green button:hover {
     color: var(--green);
-    background-color: var(--greenBackground);
+    background-color: var(--greenBackground)
 }
 
 .postActionContainer {
@@ -392,14 +392,14 @@ button span {
 
 .user .userDetailsContainer {
     flex: 1;
-    padding: 0 var(--spacing);
+    padding: 0 var(--spacing)
 }
 
 .profilePictureButton,
 .coverPhotoButton {
     position: absolute;
     font-size: 50px;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(0,0,0,0.6);
     display: none;
 }
 
@@ -425,7 +425,7 @@ button span {
 #coverPreview {
     width: 100%;
     display: block;
-
+ 
     /* This rule is very important, please don't ignore this */
     max-width: 100%;
 }
@@ -440,7 +440,7 @@ button span {
 }
 
 .pinnedPostContainer {
-    border-bottom: 10px solid rgb(230, 236, 240);
+    border-bottom: 10px solid rgb(230,236,240);
 }
 
 .searchBarContainer {
@@ -452,7 +452,7 @@ button span {
 .searchBarContainer i {
     position: absolute;
     top: 20px;
-    left: 25px;
+    left: 28px;
 }
 
 .searchBarContainer #searchBox {
@@ -508,7 +508,7 @@ button span {
 
 .selectedUser {
     font-weight: 300;
-    background-color: #cbe5fe;
+    background-color: #CBE5FE;
     color: #0084ff;
     padding: 5px;
     border-radius: 3px;
@@ -525,7 +525,7 @@ button span {
 }
 
 .resultListItem:hover {
-    background-color: #f2f2f2;
+    background-color: #F2F2F2;
 }
 
 .resultsDetailsContainer {
@@ -565,7 +565,7 @@ button span {
     position: absolute;
     bottom: 0;
     margin: 0;
-    border: 3px solid #fff;   
+    border: 2px solid #fff;
 }
 
 .groupChatImage img:first-of-type {
@@ -645,13 +645,14 @@ button span {
     width: 40px;
     height: 40px;
     border: 2px solid #fff;
-    border-radius: 50px;
+    border-radius: 50%;
 }
 
 .chatImagesContainer .userCount {
     height: 40px;
     width: 40px;
     background-color: #f1f1f1;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -717,7 +718,6 @@ button span {
     color: #fff;
 }
 
-/*Our message*/
 .chatMessages .message.mine.first .messageBody {
     border-bottom-right-radius: 2px;
 }
@@ -735,7 +735,6 @@ button span {
     border-top-right-radius: 2px;
 }
 
-/*Their message*/
 .chatMessages .message.theirs.first .messageBody {
     border-bottom-left-radius: 2px;
 }
@@ -802,7 +801,7 @@ button span {
     position: absolute;
     top: 0;
     right: 0;
-    color: #fff;
+    color: white;
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -813,4 +812,19 @@ button span {
 #notificationBadge.active,
 #messagesBadge.active {
     visibility: visible;
+}
+
+#notificationList {
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    width: 350px;
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+#notificationList .active {
+    background-color: white;
 }
